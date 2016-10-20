@@ -1,0 +1,5 @@
+/home/anyel/Documentos/finalPract/finalPract/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/anyel/Documentos/finalPract/finalPract/bin/Debug/finalPract.exe.mdb
+/home/anyel/Documentos/finalPract/finalPract/bin/Debug/finalPract.exe
+/home/anyel/Documentos/finalPract/finalPract/obj/x86/Debug/finalPract.exe
+/home/anyel/Documentos/finalPract/finalPract/obj/x86/Debug/finalPract.exe.mdb
