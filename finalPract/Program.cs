@@ -27,82 +27,24 @@ namespace Decrypting_CMD
 		String[] user = new String[TAM_MAX];
 		String[] paswordHash = new String[TAM_MAX];
 		int cant = 0;
-		Thread thread1;
 		static internal Thread[] threadAtack;
-		Thread multiThread;
-		Thread t;
+	
 
 		/*
         * @param Metodo para administrar todos los procesos
         */
 		public void origin(){
 			read ();
-			cantThread ();
-			/*for(int i = 0; i<cant; i++)
-				generatingDictionary (user[i],paswordHash[i], 8, 1);*/
-		}
-
-		/*
-        * @param Metodo para ingresar la cantidad de los hilos
-        */
-		public void cantThread(){
-			int num;
-			int cantAtack;
-			int ult = 0;
-			int ver = 0;
-			int pos = 1;
-			//do {
-			Console.Write ("Ingrese la Cantidad de Hilos para tratar el ataque: ");
-			num = Convert.ToInt32(Console.ReadLine ());
-			Console.WriteLine (".");
-			Console.WriteLine (".");
-			Console.WriteLine ("Iniciando Ataque!!!");
-			Console.WriteLine (".");
-			Console.WriteLine (".");
-			Console.WriteLine (".");
-			Console.WriteLine (".");
-			Console.WriteLine (".");
+			imprimir ();
 			Console.ReadKey ();
 			Console.Clear ();
-			cantAtack = (int) (cant / num);
-			if ((cantAtack * num) < cant)
-				cantAtack += 1;
-
-			threadAtack = new Thread[cantAtack];
-			for (int i = 0; i < cantAtack; i++)  
-			{ 
-				Thread t = new Thread(new ThreadStart (() => (newThread(pos)))); //  <----- problem here
-				threadAtack[i]      =      t;      
-				threadAtack[i].Name = "Thread-" + i.ToString(); 
-			} 
-			for (int i = 0; i < cantAtack; i++)  
-			{ 
-				threadAtack[i].Start();   
-
-			} 
+			generatingDictionary ();
+			Console.WriteLine ("#### Crack Exitoso ####");
+			Console.ReadKey ();
 		}
 
 		/*
-        * @param Metodo para crear n cantidad de hilos
-        */
-		public int newThread(int ult){
-			int val = 0;
-
-			lock(this)
-			{      
-				val = generatingDictionary (user[ult],paswordHash[ult], 8, 1);
-				Thread.Sleep(5);
-				if (val == 1) { 
-					return      1;      
-				} else {
-					return 0;
-				}
-			}  
-			return 0;
-		}
-
-		/*
-        * @param Metodo para crear diccionario de ataque
+        * @param Metodo para cifrar
         */
 		public String codeMD5(String bruteF){
 			MD5 md5 = MD5CryptoServiceProvider.Create();
@@ -117,50 +59,9 @@ namespace Decrypting_CMD
 		}
 
 		/*
-        * @param Metodo para romper hash
-        */
-
-		public int separateForce(String hashBruteForceMD5, String hash){
-			int ver = 0;
-	
-			thread1 = new Thread (() => {
-				ver = 0;
-				try	{
-					ver = verifForce(hashBruteForceMD5,hash);
-					if(ver == 1){
-						thread1.Abort ();
-					}
-				}catch (Exception e)
-				{
-					throw e;
-				}
-			} );
-
-			thread1.IsBackground = true;
-			thread1.Start ();
-			thread1.Join ();
-
-	
-			if (ver == 1) {
-				return 1;
-			}
-
-			return 0;
-		}
-
-		/*
-        * @param Metodo para romper hash
-        */
-		public int verifForce(String str_FMD5, String str_MD5){
-			if (String.Compare(str_FMD5,str_MD5) == 0) {
-				return 1;
-			}
-			return 0;
-		}
-		/*
         * @param Metodo para crear diccionario de ataque
         */
-		public int generatingDictionary(String user, String hash, int tam, int min){
+		public void generatingDictionary(){
 			char[] alpha = {'a','b','c','d','e','f','g','h','i',
 				'j','k','l','m','n','ñ','o','p','q',
 				'r','s','t','u','v','w','x','y','z',
@@ -171,89 +72,60 @@ namespace Decrypting_CMD
 			String bruteF;
 			String hashBruteForceMD5 = "";
 			bruteF = "";
+			int pos = 0;
+			bool rev;
+			int contCrack = 0;
 
 			for (int i = 0; i < tamAlpha; i++) {
 				bruteF = "";
 				bruteF = ("" + alpha[i]);
+				//Console.WriteLine (bruteF);
 				hashBruteForceMD5 = codeMD5(bruteF);
-				if (separateForce (hashBruteForceMD5, hash) == 1) {
-					Console.Write (user);
-					Console.WriteLine ("\t" + bruteF);
-					Console.ReadKey ();
-					return 1;
+				rev = compare (hashBruteForceMD5,ref pos);
+				if (rev) {
+					look (bruteF, pos);
+					contCrack++;
+					if (contCrack == cant) {
+						return;
+					}
 				}
 
 				for (int j= 0; j < tamAlpha; j++) {
 					bruteF = (alpha[i] + "" + alpha[j]);
+					//Console.WriteLine (bruteF);
 					hashBruteForceMD5 = codeMD5(bruteF);
-					if (separateForce (hashBruteForceMD5, hash) == 1) {
-						Console.Write (user);
-						Console.WriteLine ("\t" + bruteF);
-						Console.ReadKey ();
-						return 1;
+					rev = compare (hashBruteForceMD5,ref pos);
+					if (rev) {
+						look (bruteF, pos);
+						contCrack++;
+						if (contCrack == cant) {
+							return;
+						}
 					}
-
 
 					for (int k = 0; k < tamAlpha; k++) {
 						bruteF = (alpha[i]+ ""  + alpha[j]+ ""  + alpha[k]);
+						//Console.WriteLine (bruteF);
 						hashBruteForceMD5 = codeMD5(bruteF);
-						if (separateForce (hashBruteForceMD5, hash) == 1) {
-							Console.Write (user);
-							Console.WriteLine ("\t" + bruteF);
-							Console.ReadKey ();
-							return 1;
+						rev = compare (hashBruteForceMD5,ref pos);
+						if (rev) {
+							look (bruteF, pos);
+							contCrack++;
+							if (contCrack == cant) {
+								return;
+							}
 						}
+
 						for (int l = 0; l < tamAlpha; l++) {
 							bruteF = (alpha[i]+ ""  + alpha[j]+ ""  + alpha[k]+ ""  + alpha[l]);
+							//Console.WriteLine (bruteF);
 							hashBruteForceMD5 = codeMD5(bruteF);
-							if (separateForce (hashBruteForceMD5, hash) == 1) {
-								Console.Write (user);
-								Console.WriteLine ("\t" + bruteF);
-								Console.ReadKey ();
-								return 1;
-							}
-
-							for (int m = 0; m < tamAlpha; m++) {
-								bruteF = (alpha[i]+ ""  + alpha[j]+ ""  + alpha[k]+ ""  + alpha[l]+ ""  + alpha[m]);
-								hashBruteForceMD5 = codeMD5(bruteF);
-								if (separateForce (hashBruteForceMD5, hash) == 1) {
-									Console.Write (user);
-									Console.WriteLine ("\t" + bruteF);
-									Console.ReadKey ();
-									return 1;
-								}
-
-								for (int n = 0; n < tamAlpha; n++) {
-									bruteF = (alpha[i]+ ""  + alpha[j]+ ""  + alpha[k] + "" + alpha[l] + "" + alpha[m] + "" + alpha[n]);
-									hashBruteForceMD5 = codeMD5(bruteF);
-									if (separateForce (hashBruteForceMD5, hash) == 1) {
-										Console.Write (user);
-										Console.WriteLine ("\t" + bruteF);
-										Console.ReadKey ();
-										return 1;
-									}
-
-									for (int o = 0; o < tamAlpha; o++) {
-										bruteF = (alpha[i] + "" + alpha[j] + "" + alpha[k] + "" + alpha[l] + "" + alpha[m] + "" + alpha[n] + "" + alpha[o]);
-										hashBruteForceMD5 = codeMD5(bruteF);
-										if (separateForce (hashBruteForceMD5, hash) == 1) {
-											Console.Write (user);
-											Console.WriteLine ("\t" + bruteF);
-											Console.ReadKey ();
-											return 1;
-										}
-
-										for (int p = 0; p < tamAlpha; p++) {
-											bruteF = (alpha[i] + "" + alpha[j] + "" + alpha[k] + "" + alpha[l] + "" + alpha[m] + "" + alpha[n] + "" + alpha[o] + "" + alpha[p]);
-											hashBruteForceMD5 = codeMD5(bruteF);
-											if (separateForce (hashBruteForceMD5, hash) == 1) {
-												Console.Write (user);
-												Console.WriteLine ("\t" + bruteF);
-												Console.ReadKey ();
-												return 1;
-											}
-										}
-									}
+							rev = compare (hashBruteForceMD5,ref pos);
+							if (rev) {								
+								look (bruteF, pos);
+								contCrack++;
+								if (contCrack == cant) {
+									return;
 								}
 							}
 						}
@@ -261,7 +133,6 @@ namespace Decrypting_CMD
 				}
 			}
 
-			return 0;
 		}
 
 		/*
@@ -306,7 +177,38 @@ namespace Decrypting_CMD
 			}
 			Console.WriteLine ();
 		}
+		/*
+        * @param Metodo para imprimir contendo user
+        */
+		public void imprimir(){
+			for (int i = 0; i < cant; i++)
+			{
+				Console.Write (user [i] + "\t");
+				//Console.WriteLine (paswordHash[i]);
+			}
+		}
+		/*
+        * @param Metodo para comparar
+        */
+		public bool compare(String passMD5, ref int pos){
+			for (int i = 0; i < cant; i++) {
+				//Console.WriteLine (paswordHash [i] + " " + passMD5);
+				if(String.Compare(paswordHash[i],passMD5) == 0){
+					pos = i;
+					return true;
+				}
+			}
+					return false;
+		}
 
-
+		/*
+        * @param Metodo para mostrar user Crack
+        */
+		public void look(String pass, int pos){
+			
+			Console.WriteLine (user[pos] + "\t" + pass);
+			//Console.WriteLine ("_____________________________________________");
+				
+		}
 	}
 }

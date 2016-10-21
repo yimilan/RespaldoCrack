@@ -1,1 +1,12 @@
-﻿<Properties StartupItem="finalPract/finalPract.csproj" />
+﻿<Properties StartupItem="finalPract/finalPract.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="finalPract/Program.cs">
+    <Files>
+      <File FileName="finalPract/Program.cs" Line="34" Column="25" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
